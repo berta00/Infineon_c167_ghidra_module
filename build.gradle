@@ -1,0 +1,28 @@
+def ghidra_install_dir
+
+
+if (System.env.GHIDRA_INSTALL_DIR) {
+    ghidra_install_dir = System.env.GHIDRA_INSTALL_DIR
+}
+
+if (ghidra_install_dir) {
+    apply from: new File(ghidra_install_dir).getCanonicalPath() + "/support/buildExtension.gradle"
+} else {
+    throw new GradleException("GHIDRA_INSTALL_DIR env var is not defined")
+}
+
+
+repositories {
+    
+}
+
+dependencies {
+    implementation fileTree(dir: 'lib', include: '*.jar')
+}
+
+
+task compileSleigh(type: Exec) {
+    workingDir 'data/languages'
+    commandLine "${ghidra_install_dir}/support/sleigh", '-a', 'c167.slaspec'
+}
+build.dependsOn compileSleigh
